@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -8,6 +8,10 @@
     <title>Document</title>
 </head>
 <body>
-Error default Page
+    <p>This is <span th:text="${statusCode}?:'_'"></span> error page</p>
+    <ul>
+        <li>errorCode : <span th:text="${errorCode}?:'_'"></span> </li>
+        <li>message : <span th:text="${message}?:'_'"></span> </li>
+    </ul>
 </body>
 </html>
