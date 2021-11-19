@@ -1,21 +1,22 @@
 package com.uno.getinline.controller.api;
 
+import com.uno.getinline.exception.GeneralException;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RequestMapping("/api")
 @RestController
 public class ApiEventController {
 
     @GetMapping("/events")
-    public List<String> getEvents(){
-        return List.of("event1","event2");
+    public void getEvents(){
+        throw new GeneralException("테스트 에러 메시지");
+        //return List.of("event1","event2");
     }
 
-    @GetMapping("/events")
-    public boolean createEvent(){
-        return true;
+    @PostMapping("/events")
+    public void createEvent(){
+        throw new RuntimeException("런타임 에러 메시지");
+        //return true;
     }
 
     @GetMapping("/events/{eventId}")
@@ -32,4 +33,6 @@ public class ApiEventController {
     public boolean removeEvent(@PathVariable Integer eventId){
         return true;
     }
+
+
 }
