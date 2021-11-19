@@ -1,6 +1,6 @@
 package com.uno.getinline.controller.api;
 
-import com.uno.getinline.exception.GeneralException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api")
@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.*;
 public class ApiEventController {
 
     @GetMapping("/events")
-    public void getEvents(){
-        throw new GeneralException("테스트 에러 메시지");
+    public void getEvents() throws Exception{
+        throw new HttpRequestMethodNotSupportedException("스프링 405 에러 메시지");
         //return List.of("event1","event2");
     }
 
@@ -21,7 +21,8 @@ public class ApiEventController {
 
     @GetMapping("/events/{eventId}")
     public String getEvent(@PathVariable Integer eventId){
-        return "event : " + eventId;
+        throw new RuntimeException("런타임 에러 테스트");
+        //return "event : " + eventId;
     }
 
     @PutMapping("/events/{eventId}")
