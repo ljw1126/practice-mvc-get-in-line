@@ -1,5 +1,6 @@
 package com.uno.getinline.dto;
 
+import com.uno.getinline.constant.ErrorCode;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -7,17 +8,17 @@ import lombok.ToString;
 @Getter
 @ToString
 @EqualsAndHashCode(callSuper = true)
-public class ApiDataResponse extends ApiErrorResponse{
+public class ApiDataResponse<T> extends ApiErrorResponse{
 
-    private final Object data;
-
-    private ApiDataResponse(boolean success, Integer errorCode, String message, Object data){
-        super(success, errorCode, message);
+    private final T data;
+    // 정상상황 가정하고 만든거
+    private ApiDataResponse(T data){
+        super(true, ErrorCode.OK.getCode(), ErrorCode.OK.getMessage());
         this.data = data;
     }
 
-    public static ApiDataResponse of(boolean success, Integer errorCode, String message, Object data){
-        return new ApiDataResponse(success, errorCode, message, data);
+    public static <T> ApiDataResponse<T> of(T data){
+        return new ApiDataResponse(data);
     }
 
 }
