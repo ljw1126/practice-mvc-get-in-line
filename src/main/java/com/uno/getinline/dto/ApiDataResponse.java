@@ -1,3 +1,5 @@
+
+
 package com.uno.getinline.dto;
 
 import com.uno.getinline.constant.ErrorCode;
@@ -19,6 +21,10 @@ public class ApiDataResponse<T> extends ApiErrorResponse{
 
     public static <T> ApiDataResponse<T> of(T data){
         return new ApiDataResponse(data);
+    }
+
+    public static <T> ApiDataResponse<T> empty(){
+        return new ApiDataResponse(null);
     }
 
 }
