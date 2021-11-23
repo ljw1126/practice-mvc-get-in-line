@@ -29,7 +29,7 @@ public enum ErrorCode { // 협업과 관련된 요소
     private final String message;
 
     public String getMessage(Exception e) {
-        return this.getMessage(e.getMessage());
+        return this.getMessage(this.getMessage() +" - "+e.getMessage());
     }
 
     public String getMessage(String message) {
