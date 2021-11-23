@@ -1,19 +1,24 @@
 package com.uno.getinline.controller.api;
 
-import com.sun.jdi.request.EventRequest;
 import com.uno.getinline.constant.EventStatus;
 import com.uno.getinline.dto.ApiDataResponse;
+import com.uno.getinline.dto.EventRequest;
 import com.uno.getinline.dto.EventResponse;
 import com.uno.getinline.service.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Validated
 @RequiredArgsConstructor
 @RequestMapping("/api")
 @RestController
@@ -23,8 +28,8 @@ public class ApiEventController {
 
     @GetMapping("/events")
     public ApiDataResponse<List<EventResponse>> getEvents(
-            Long placeId,
-            String eventName,
+            @Positive Long placeId,
+            @Size(min=2) String eventName,
             EventStatus eventStatus,
             @DateTimeFormat(iso= DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventStartDatetime,
             @DateTimeFormat(iso= DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventEndDatetime
@@ -44,8 +49,12 @@ public class ApiEventController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/events")
-    public ApiDataResponse<Void> createEvent(){
-        return ApiDataResponse.empty();
+    public ApiDataResponse<String> createEvent(
+            @Valid @RequestBody EventRequest eventRequest,
+            @PathVariable Long placeId
+    ){
+        boolean result = eventService.createEvent(eventRequest.toDto());
+        return ApiDataResponse.of(Boolean.toString(result));
     }
 
     @GetMapping("/events/{eventId}")
