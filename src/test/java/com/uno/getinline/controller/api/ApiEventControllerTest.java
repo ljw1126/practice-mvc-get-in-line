@@ -25,6 +25,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("API 컨트롤러 - 이벤트")
@@ -83,7 +84,7 @@ class ApiEventControllerTest {
         then(eventService).should().getEvents(any(),any(),any(),any(),any());
     }
 
-    @DisplayName("[API][GET] 이벤트 리스트 조회 - 잘못된 검색 파라미터//아직 안함")
+    @DisplayName("[API][GET] 이벤트 리스트 조회 - 잘못된 검색 파라미터//ch03-02validation")
     @Test
     void givenWrongParameters_whenRequestingEvents_thenReturnsFailedStandardResponse() throws Exception {
         // Given
@@ -93,12 +94,18 @@ class ApiEventControllerTest {
                         get("/api/events")
                                 .queryParam("placeId", "0")
                                 .queryParam("eventName", "오")
+                                .queryParam("eventStatus",EventStatus.OPENED.name())
+                                .queryParam("eventStartDatetime","2021-01-01T00:00:00")
+                                .queryParam("eventEndDatetime","2021-01-02T00:00:00")
                 )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.errorCode").value(ErrorCode.VALIDATION_ERROR.getCode()))
-                .andExpect(jsonPath("$.message").value(containsString(ErrorCode.VALIDATION_ERROR.getMessage())));
+                .andExpect(jsonPath("$.message").value(containsString(ErrorCode.VALIDATION_ERROR.getMessage())))
+                .andDo(print());   // containsString() 일부만 맞아도
+
+        then(eventService).shouldHaveNoInteractions();
     }
 
 
@@ -120,18 +127,53 @@ class ApiEventControllerTest {
         given(eventService.createEvent(any())).willReturn(true);
 
         // When & Then
+//        mvc.perform(
+//                        post("/api/events")
+//                                .contentType(MediaType.APPLICATION_JSON)
+//                                .content(mapper.writeValueAsString(eventResponse))
+//                )
+//                .andExpect(status().isCreated())
+//                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+//                .andExpect(jsonPath("$.data").value(Boolean.TRUE.toString()))
+//                .andExpect(jsonPath("$.success").value(true))
+//                .andExpect(jsonPath("$.errorCode").value(ErrorCode.OK.getCode()))
+//                .andExpect(jsonPath("$.message").value(ErrorCode.OK.getMessage()));
+//        then(eventService).should().createEvent(any());
+    }
+
+
+    @DisplayName("[API][POST] 이벤트 생성- 잘못된 데이터 입력")
+    @Test
+    void givenWrongEvent_whenCreatingAnEvent_thenReturnsSuccessfulStandardResponse() throws Exception {
+        // Given  ( 일부러 틀린 값만 테스트 )
+        EventResponse eventResponse = EventResponse.of(
+                -1L,
+                " ",
+                null,
+                null,
+                null,
+                -1,
+                0,
+                "마스크 꼭 착용하세요"
+        );
+
+        /**
+         * VALIDATION_ERROR확인시 출력되는 10001 - Spring-detected bad request 은 MethodArgumentNotValidException 로 spring에서 관리하는 에러
+         * 생성해둔 예외처리 핸들러 APIExceptionHandler.java 에서
+         * Exception을 다루는 handleExceptionInternal()로 에러가 들어가 10001(SPRING_BAD_REQUEST, 임의지정) 을 보내줌
+                 */
+        // When & Then
         mvc.perform(
                         post("/api/events")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(mapper.writeValueAsString(eventResponse))
                 )
-                .andExpect(status().isCreated())
+                .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.data").value(Boolean.TRUE.toString()))
-                .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.errorCode").value(ErrorCode.OK.getCode()))
-                .andExpect(jsonPath("$.message").value(ErrorCode.OK.getMessage()));
-        then(eventService).should().createEvent(any());
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.errorCode").value(ErrorCode.SPRING_BAD_REQUEST.getCode()))
+                .andExpect(jsonPath("$.message").value(containsString(ErrorCode.SPRING_BAD_REQUEST.getMessage())));
+        then(eventService).shouldHaveNoInteractions();
     }
 
 
