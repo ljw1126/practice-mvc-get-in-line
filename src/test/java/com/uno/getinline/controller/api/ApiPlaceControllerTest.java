@@ -1,14 +1,25 @@
 package com.uno.getinline.controller.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uno.getinline.constant.ErrorCode;
+import com.uno.getinline.constant.EventStatus;
 import com.uno.getinline.constant.PlaceType;
+import com.uno.getinline.dto.EventDTO;
+import com.uno.getinline.service.EventService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -17,9 +28,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ApiPlaceControllerTest {
 
     private final MockMvc mvc;
+    private final ObjectMapper mapper;
 
-    public ApiPlaceControllerTest(@Autowired MockMvc mvc){
+    public ApiPlaceControllerTest(
+            @Autowired MockMvc mvc,
+            @Autowired ObjectMapper mapper
+    ){
         this.mvc = mvc;
+        this.mapper = mapper;
     }
 
     /*@DisplayName("[API][GET] 장소 리스트 조회")
@@ -113,4 +129,6 @@ class ApiPlaceControllerTest {
 
         ;
     }
+
+
 }
