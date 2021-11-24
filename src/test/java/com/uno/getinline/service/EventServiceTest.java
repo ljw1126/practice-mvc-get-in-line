@@ -1,7 +1,9 @@
 package com.uno.getinline.service;
 
+import com.uno.getinline.constant.ErrorCode;
 import com.uno.getinline.constant.EventStatus;
 import com.uno.getinline.dto.EventDTO;
+import com.uno.getinline.exception.GeneralException;
 import com.uno.getinline.repository.EventRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +17,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -48,6 +52,34 @@ class EventServiceTest {
         //then
         assertThat(list).hasSize(2);
         then(eventRepository).should().findEvents(null, null, null, null, null);
+    }
+
+    /**
+     * 1. org.mockito.exceptions.base.MockitoException:
+     * Checked exception is invalid for this method!
+     *
+     * Exception e 사용시 위에 에러 출력됨
+       2.  assertThat(throwable)
+         .isInstanceOf(GeneralException.class)
+         .hasMessageContaining(ErrorCode.DATA_ACCESS_ERROR.getMessage()); 이해 안됨 ch03-03
+     * >> EventService에 getEvents() 에 try catch문으로 에러발생시 GeneralException throw 하도록 변경
+     */
+    @DisplayName("이벤트 검색하는데 에러가 발생한 경우, 줄서기 프로젝트 기본 에러로 전환하여 예외던진다.")
+    @Test
+    void givenDataRelatedException_whenSearchingEvents_thenReturnsEntireEventList(){
+        //given
+        RuntimeException e = new RuntimeException("This is test");
+        given(eventRepository.findEvents(any(),any(),any(),any(),any()))
+                .willThrow(e);
+        //when (예외 받는 메소드 catchThrowable)
+        Throwable throwable = catchThrowable(()-> eventService.getEvents(null, null, null, null, null));
+
+        //then
+        assertThat(throwable)
+                .isInstanceOf(GeneralException.class)
+                .hasMessageContaining(ErrorCode.DATA_ACCESS_ERROR.getMessage());
+        then(eventRepository).should().findEvents(any(),any(),any(),any(),any());
+
     }
 
     @DisplayName("검색 조건과 함께 이벤트 검색하면, 전체 결과를 출력하여 보여준다.")
