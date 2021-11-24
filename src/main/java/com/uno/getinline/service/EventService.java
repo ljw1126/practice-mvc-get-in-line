@@ -1,7 +1,9 @@
 package com.uno.getinline.service;
 
+import com.uno.getinline.constant.ErrorCode;
 import com.uno.getinline.constant.EventStatus;
 import com.uno.getinline.dto.EventDTO;
+import com.uno.getinline.exception.GeneralException;
 import com.uno.getinline.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,13 +26,17 @@ public class EventService {
             LocalDateTime eventStartDatetime,
             LocalDateTime eventEndDatetime
     ) {
-        return eventRepository.findEvents(
-                id,
-                eventName,
-                eventStatus,
-                eventStartDatetime,
-                eventEndDatetime
-        );
+        try{
+            return eventRepository.findEvents(
+                    id,
+                    eventName,
+                    eventStatus,
+                    eventStartDatetime,
+                    eventEndDatetime
+            );
+        }catch(Exception e){
+            throw new GeneralException(ErrorCode.DATA_ACCESS_ERROR, e);
+        }
     }
 
     public Optional<EventDTO> getEvent(Long eventId){
