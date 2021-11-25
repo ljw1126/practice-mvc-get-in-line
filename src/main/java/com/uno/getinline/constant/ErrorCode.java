@@ -28,7 +28,7 @@ public enum ErrorCode { // 협업과 관련된 요소
     private final ErrorCategory errorCategory;
     private final String message;
 
-    public String getMessage(Exception e) {
+    public String getMessage(Throwable e) {
         return this.getMessage(this.getMessage() +" - "+e.getMessage());
     }
 
