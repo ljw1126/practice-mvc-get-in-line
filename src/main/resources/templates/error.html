@@ -8,10 +8,10 @@
     <title>Document</title>
 </head>
 <body>
-    <p>This is <span th:text="${statusCode}?:'_'"></span> error page</p>
+    <p>This is <span data-th-text="${statusCode}?:'_'"></span> error page</p>
     <ul>
-        <li>errorCode : <span th:text="${errorCode}?:'_'"></span> </li>
-        <li>message : <span th:text="${message}?:'_'"></span> </li>
+        <li>errorCode : <span data-th-text="${errorCode}?:'_'"></span> </li>
+        <li>message : <span data-th-text="${message}?:'_'"></span> </li>
     </ul>
 </body>
 </html>
