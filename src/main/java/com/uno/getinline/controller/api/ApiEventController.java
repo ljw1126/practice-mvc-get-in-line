@@ -22,8 +22,8 @@ import java.util.List;
 @Slf4j
 @Validated
 @RequiredArgsConstructor
-@RequestMapping("/api")
-@RestController
+//@RequestMapping("/api")
+//@RestController
 public class ApiEventController {
 
     private final EventService eventService;

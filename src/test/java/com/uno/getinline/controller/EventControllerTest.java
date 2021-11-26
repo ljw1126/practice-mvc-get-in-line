@@ -1,5 +1,6 @@
 package com.uno.getinline.controller;
 
+import com.uno.getinline.dto.EventDTO;
 import com.uno.getinline.service.EventService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,8 +24,7 @@ public class EventControllerTest {
 
     private final MockMvc mvc;
 
-    @MockBean
-    private EventService eventService;
+    @MockBean private EventService eventService;
 
     public EventControllerTest(@Autowired MockMvc mvc) {
         this.mvc = mvc;
@@ -34,15 +34,16 @@ public class EventControllerTest {
     @Test
     void givenNothing_whenRequestingEventsPage_thenReturnsEventsPage() throws Exception {
         // Given
+        given(eventService.getEvents(any())).willReturn(List.of());
 
         // When & Then
-       /* mvc.perform(get("/events"))
+        mvc.perform(get("/events"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
                 .andExpect(view().name("event/index"))
                 .andExpect(model().hasNoErrors())
-                .andExpect(model().attributeExists("events"));*/
-
+                .andExpect(model().attributeExists("events"));
+        then(eventService).should().getEvents(any());
     }
 
     @DisplayName("[view][GET] 이벤트 세부 정보 페이지")
@@ -50,6 +51,10 @@ public class EventControllerTest {
     void givenEventId_whenRequestingEventDetailPage_thenReturnsEventDetailPage() throws Exception {
         // Given
         long eventId = 1L;
+        given(eventService.getEvent(eventId)).willReturn(Optional.of(
+                EventDTO.of(eventId, null, null, null, null, null, null, null, null, null, null)
+        ));
+
 
         // When & Then
         mvc.perform(get("/events/" + eventId))
@@ -58,6 +63,24 @@ public class EventControllerTest {
                 .andExpect(view().name("event/detail"))
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().attributeExists("event"));
+
+        then(eventService).should().getEvent(eventId);
+    }
+
+    @DisplayName("[view][GET] 이벤트 세부 정보 페이지 - 데이터 없음")
+    @Test
+    void givenNonexistentEventId_whenRequestingEventDetailPage_thenReturnsErrorPage() throws Exception {
+        // Given
+        long eventId = 0L;
+        given(eventService.getEvent(eventId)).willReturn(Optional.empty());
+
+        // When & Then
+        mvc.perform(get("/events/"+eventId))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+                .andExpect(view().name("error"));
+
+        then(eventService).should().getEvent(eventId);
     }
 
 
