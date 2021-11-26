@@ -4,6 +4,7 @@ import com.uno.getinline.constant.ErrorCode;
 import com.uno.getinline.dto.ApiErrorResponse;
 import com.uno.getinline.exception.GeneralException;
 import org.hibernate.validator.internal.util.annotation.ConstraintAnnotationDescriptor;
+import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.validation.ConstraintViolationException;
 
-@RestControllerAdvice(annotations = RestController.class)
+@RestControllerAdvice(annotations = {RestController.class, RepositoryRestController.class})
 public class APIExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
