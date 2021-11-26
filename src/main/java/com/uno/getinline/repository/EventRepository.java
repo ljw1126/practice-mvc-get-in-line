@@ -1,7 +1,9 @@
 package com.uno.getinline.repository;
 
 import com.uno.getinline.constant.EventStatus;
+import com.uno.getinline.domain.Event;
 import com.uno.getinline.dto.EventDTO;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -10,7 +12,7 @@ import java.util.Optional;
 
 
 //TODO: 인스턴스 생성 편의를 위해 임시로 default 사용, repository layer 구현에 완성되면 삭제할 것(ch03-2)
-public interface EventRepository {
+public interface EventRepository extends JpaRepository<Event, Long> {
 
     default List<EventDTO> findEvents(
             Long placeId,
