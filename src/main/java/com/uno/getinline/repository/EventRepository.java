@@ -4,7 +4,6 @@ import com.uno.getinline.constant.EventStatus;
 import com.uno.getinline.domain.Event;
 import com.uno.getinline.dto.EventDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
