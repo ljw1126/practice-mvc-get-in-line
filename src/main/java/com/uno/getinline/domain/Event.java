@@ -30,6 +30,7 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     @Setter
     @Column(nullable = false)
     private Long placeId;
@@ -48,21 +49,19 @@ public class Event {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime eventStartDatetime;
 
-    @Setter
-    @Column(nullable = false, columnDefinition = "datetime")
+    @Setter @Column(nullable = false, columnDefinition = "datetime")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime eventEndDatetime;
 
-    @Setter
-    @Column(nullable = false, columnDefinition = "integer default 0")
+    @Setter @Column(nullable = false, columnDefinition = "integer default 0")
     private Integer currentNumberOfPeople;
 
-    @Setter
-    @Column(nullable = false)
+    @Setter @Column(nullable = false)
     private Integer capacity;
 
     @Setter
     private String memo;
+
 
     @Column(nullable = false, insertable = false, updatable = false,
             columnDefinition = "datetime default CURRENT_TIMESTAMP")
@@ -74,8 +73,8 @@ public class Event {
     @LastModifiedDate
     private LocalDateTime modifiedAt;
 
-    protected Event() {
-    }
+
+    protected Event() {}
 
     protected Event(
             Long placeId,
@@ -118,4 +117,5 @@ public class Event {
                 memo
         );
     }
+
 }
